@@ -1,0 +1,124 @@
+package tests;
+
+import base.BaseTest;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import pages.DashboardPage;
+import pages.LoginPage;
+
+public class DashboardTest extends BaseTest {
+
+    /**
+     * Test: Verify Dashboard Page Loads Successfully
+     */
+    @Test(groups = {"smoke", "regression"}, description = "Verify dashboard loads after successful login")
+    public void verifyDashboardLoads() {
+        // Login first
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login("Admin", "admin123");
+
+        // Wait for dashboard to load
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Verify dashboard page
+        DashboardPage dashboardPage = new DashboardPage(driver);
+        Assert.assertTrue(dashboardPage.isDashboardLoaded(), "Dashboard page did not load");
+        Assert.assertEquals(dashboardPage.getDashboardTitle(), "Dashboard");
+    }
+
+    /**
+     * Test: Verify Navigation Menu is Visible
+     */
+    @Test(groups = {"smoke", "regression"}, description = "Verify navigation menu is visible on dashboard")
+    public void verifyNavigationMenuVisible() {
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login("Admin", "admin123");
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        DashboardPage dashboardPage = new DashboardPage(driver);
+        Assert.assertTrue(dashboardPage.isNavigationMenuVisible(), "Navigation menu is not visible");
+    }
+
+    /**
+     * Test: Verify Dashboard Contains Widgets
+     */
+    @Test(groups = {"regression"}, description = "Verify dashboard displays widgets")
+    public void verifyDashboardWidgets() {
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login("Admin", "admin123");
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        DashboardPage dashboardPage = new DashboardPage(driver);
+        int widgetCount = dashboardPage.getDashboardWidgetCount();
+        Assert.assertTrue(widgetCount > 0, "No widgets found on dashboard");
+        System.out.println("Number of widgets on dashboard: " + widgetCount);
+    }
+
+    /**
+     * Test: Verify Admin Menu Link is Accessible
+     */
+    @Test(groups = {"regression"}, description = "Verify Admin menu navigation")
+    public void verifyAdminMenuNavigation() {
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login("Admin", "admin123");
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        DashboardPage dashboardPage = new DashboardPage(driver);
+        Assert.assertTrue(dashboardPage.isDashboardLoaded(), "Dashboard did not load");
+
+        try {
+            dashboardPage.clickAdminMenu();
+            Thread.sleep(2000);
+            String pageTitle = driver.getTitle();
+            Assert.assertTrue(pageTitle.contains("OrangeHRM"), "Admin page did not load");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Test: Verify Logout Functionality
+     */
+    @Test(groups = {"smoke", "regression"}, description = "Verify logout functionality")
+    public void verifyLogout() {
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login("Admin", "admin123");
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        DashboardPage dashboardPage = new DashboardPage(driver);
+        Assert.assertTrue(dashboardPage.isDashboardLoaded(), "Dashboard did not load");
+
+        try {
+            dashboardPage.logout();
+            Thread.sleep(2000);
+            String currentUrl = driver.getCurrentUrl();
+            Assert.assertTrue(currentUrl.contains("login"), "User not logged out properly");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
