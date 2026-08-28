@@ -1,0 +1,121 @@
+package pages;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import java.util.List;
+
+public class EmployeeListPage {
+
+    WebDriver driver;
+
+    public EmployeeListPage(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    // Locators
+    By employeeListTitle = By.xpath("//h5[contains(text(), 'Employee Information')]");
+    By addButton = By.xpath("//button[contains(., 'Add')]");
+    By searchField = By.xpath("//input[@placeholder='Employee Name']");
+    By searchButton = By.xpath("//button[@type='submit']");
+    By employeeTable = By.xpath("//table[@role='table']");
+    By employeeRows = By.xpath("//table[@role='table']//tbody//tr");
+    By firstEmployee = By.xpath("//table[@role='table']//tbody//tr[1]//td[2]");
+    By editButton = By.xpath("//button[@title='Edit']");
+    By deleteButton = By.xpath("//button[@title='Delete']");
+    By confirmDeleteButton = By.xpath("//button[@type='button'][contains(text(), 'Yes, Delete')]");
+    By noRecordsMessage = By.xpath("//span[contains(text(), 'No Records Found')]");
+
+    /**
+     * Verify if employee list page is loaded
+     */
+    public boolean isEmployeeListLoaded() {
+        try {
+            return driver.findElement(employeeListTitle).isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Click Add Employee button
+     */
+    public void clickAddEmployee() {
+        driver.findElement(addButton).click();
+    }
+
+    /**
+     * Search for employee by name
+     */
+    public void searchEmployee(String employeeName) {
+        WebElement searchBox = driver.findElement(searchField);
+        searchBox.clear();
+        searchBox.sendKeys(employeeName);
+        driver.findElement(searchButton).click();
+    }
+
+    /**
+     * Get count of employees in the list
+     */
+    public int getEmployeeCount() {
+        List<WebElement> rows = driver.findElements(employeeRows);
+        return rows.size();
+    }
+
+    /**
+     * Get first employee name
+     */
+    public String getFirstEmployeeName() {
+        return driver.findElement(firstEmployee).getText();
+    }
+
+    /**
+     * Verify if employee table is displayed
+     */
+    public boolean isEmployeeTableDisplayed() {
+        try {
+            return driver.findElement(employeeTable).isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Click edit button for first employee
+     */
+    public void clickEditEmployee() {
+        driver.findElement(editButton).click();
+    }
+
+    /**
+     * Click delete button for first employee
+     */
+    public void clickDeleteEmployee() {
+        driver.findElement(deleteButton).click();
+    }
+
+    /**
+     * Confirm delete action
+     */
+    public void confirmDelete() {
+        driver.findElement(confirmDeleteButton).click();
+    }
+
+    /**
+     * Check if no records message is displayed
+     */
+    public boolean isNoRecordsMessageDisplayed() {
+        try {
+            return driver.findElement(noRecordsMessage).isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Get all employee names
+     */
+    public List<WebElement> getAllEmployeeNames() {
+        return driver.findElements(By.xpath("//table[@role='table']//tbody//tr//td[2]"));
+    }
+}
