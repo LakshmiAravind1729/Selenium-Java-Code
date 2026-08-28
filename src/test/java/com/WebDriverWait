@@ -1,0 +1,131 @@
+package pages;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import utilities.WaitUtil;
+import java.time.Duration;
+import java.util.List;
+
+public class DashboardPage {
+
+    WebDriver driver;
+    WebDriverWait wait;
+
+    public DashboardPage(WebDriver driver) {
+        this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    }
+
+    // Locators
+    By dashboardTitle = By.xpath("//h6[contains(text(), 'Dashboard')]");
+    By navigationMenu = By.xpath("//nav[@class='oxd-navbar']");
+    By dashboardWidgets = By.xpath("//div[@class='orangehrm-dashboard-widget']");
+    By adminLink = By.xpath("//a[@href='/web/index.php/admin/viewAdminModule']");
+    By pimLink = By.xpath("//a[@href='/web/index.php/pim/viewPimModule']");
+    By leaveLink = By.xpath("//a[@href='/web/index.php/leave/viewLeaveModule']");
+    By userProfile = By.xpath("//img[@alt='profile picture']");
+    By logout = By.xpath("//a[contains(text(), 'Logout')]");
+
+    /**
+     * Verify if dashboard page is loaded (with wait)
+     */
+    public boolean isDashboardLoaded() {
+        try {
+            // ✅ Wait for dashboard title to be visible
+            WebElement element = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(dashboardTitle)
+            );
+            return element.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Verify if navigation menu is visible (with wait)
+     */
+    public boolean isNavigationMenuVisible() {
+        try {
+            // ✅ Wait for menu to be present
+            wait.until(ExpectedConditions.presenceOfElementLocated(navigationMenu));
+            return driver.findElement(navigationMenu).isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Get count of dashboard widgets
+     */
+    public int getDashboardWidgetCount() {
+        List<WebElement> widgets = driver.findElements(dashboardWidgets);
+        return widgets.size();
+    }
+
+    /**
+     * Click on Admin menu (with wait for clickable)
+     */
+    public void clickAdminMenu() {
+        // ✅ Wait for element to be clickable before clicking
+        WebElement adminButton = wait.until(
+            ExpectedConditions.elementToBeClickable(adminLink)
+        );
+        adminButton.click();
+    }
+
+    /**
+     * Click on PIM (Employee) menu (with wait)
+     */
+    public void clickPIMMenu() {
+        WebElement pimButton = wait.until(
+            ExpectedConditions.elementToBeClickable(pimLink)
+        );
+        pimButton.click();
+    }
+
+    /**
+     * Click on Leave menu (with wait)
+     */
+    public void clickLeaveMenu() {
+        WebElement leaveButton = wait.until(
+            ExpectedConditions.elementToBeClickable(leaveLink)
+        );
+        leaveButton.click();
+    }
+
+    /**
+     * Click on user profile (with wait)
+     */
+    public void clickUserProfile() {
+        WebElement profileImg = wait.until(
+            ExpectedConditions.elementToBeClickable(userProfile)
+        );
+        profileImg.click();
+    }
+
+    /**
+     * Logout from application (with wait)
+     */
+    public void logout() {
+        clickUserProfile();
+        
+        // ✅ Wait for logout link to be clickable
+        WebElement logoutButton = wait.until(
+            ExpectedConditions.elementToBeClickable(logout)
+        );
+        logoutButton.click();
+    }
+
+    /**
+     * Get dashboard title (with wait)
+     */
+    public String getDashboardTitle() {
+        WebElement titleElement = wait.until(
+            ExpectedConditions.visibilityOfElementLocated(dashboardTitle)
+        );
+        return titleElement.getText();
+    }
+}
