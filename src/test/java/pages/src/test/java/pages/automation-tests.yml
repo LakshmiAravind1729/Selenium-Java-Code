@@ -1,0 +1,65 @@
+name: Selenium Automation Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled'
+        required: false
+        default: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Run Selenium Tests
+
+    strategy:
+      matrix:
+        java-version: [ '11', '17' ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Install dependencies
+        run: mvn clean install -DskipTests
+
+      - name: Run Selenium tests
+        run: mvn test -DsuiteXmlFile=testng.xml
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports-java-${{ matrix.java-version }}
+          path: reports/
+          retention-days: 30
+
+      - name: Upload screenshots
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: screenshots-java-${{ matrix.java-version }}
+          path: screenshots/
+          retention-days: 30
+
+      - name: Publish test results
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: JUnit Test Results - Java ${{ matrix.java-version }}
+          path: 'target/surefire-reports/*.xml'
+          reporter: 'java-junit'
+          fail-on-error: false
