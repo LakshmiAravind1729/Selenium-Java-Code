@@ -1,6 +1,7 @@
 package tests;
 
 import base.BaseTest;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.DashboardPage;
@@ -13,18 +14,12 @@ public class DashboardTest extends BaseTest {
      */
     @Test(groups = {"smoke", "regression"}, description = "Verify dashboard loads after successful login")
     public void verifyDashboardLoads() {
-        // Login first
         LoginPage loginPage = new LoginPage(driver);
         loginPage.login("Admin", "admin123");
 
-        // Wait for dashboard to load
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        // ✅ Replace Thread.sleep(2000) with explicit wait
+        wait.until(ExpectedConditions.titleContains("OrangeHRM"));
 
-        // Verify dashboard page
         DashboardPage dashboardPage = new DashboardPage(driver);
         Assert.assertTrue(dashboardPage.isDashboardLoaded(), "Dashboard page did not load");
         Assert.assertEquals(dashboardPage.getDashboardTitle(), "Dashboard");
@@ -38,11 +33,8 @@ public class DashboardTest extends BaseTest {
         LoginPage loginPage = new LoginPage(driver);
         loginPage.login("Admin", "admin123");
 
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        // ✅ Wait for URL to contain 'dashboard' instead of sleep
+        wait.until(ExpectedConditions.urlContains("dashboard"));
 
         DashboardPage dashboardPage = new DashboardPage(driver);
         Assert.assertTrue(dashboardPage.isNavigationMenuVisible(), "Navigation menu is not visible");
@@ -56,11 +48,7 @@ public class DashboardTest extends BaseTest {
         LoginPage loginPage = new LoginPage(driver);
         loginPage.login("Admin", "admin123");
 
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        wait.until(ExpectedConditions.urlContains("dashboard"));
 
         DashboardPage dashboardPage = new DashboardPage(driver);
         int widgetCount = dashboardPage.getDashboardWidgetCount();
@@ -76,23 +64,18 @@ public class DashboardTest extends BaseTest {
         LoginPage loginPage = new LoginPage(driver);
         loginPage.login("Admin", "admin123");
 
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        wait.until(ExpectedConditions.urlContains("dashboard"));
 
         DashboardPage dashboardPage = new DashboardPage(driver);
         Assert.assertTrue(dashboardPage.isDashboardLoaded(), "Dashboard did not load");
 
-        try {
-            dashboardPage.clickAdminMenu();
-            Thread.sleep(2000);
-            String pageTitle = driver.getTitle();
-            Assert.assertTrue(pageTitle.contains("OrangeHRM"), "Admin page did not load");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        dashboardPage.clickAdminMenu();
+        
+        // ✅ Wait for page to load after navigation
+        wait.until(ExpectedConditions.urlContains("admin"));
+        
+        String pageTitle = driver.getTitle();
+        Assert.assertTrue(pageTitle.contains("OrangeHRM"), "Admin page did not load");
     }
 
     /**
@@ -103,22 +86,17 @@ public class DashboardTest extends BaseTest {
         LoginPage loginPage = new LoginPage(driver);
         loginPage.login("Admin", "admin123");
 
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        wait.until(ExpectedConditions.urlContains("dashboard"));
 
         DashboardPage dashboardPage = new DashboardPage(driver);
         Assert.assertTrue(dashboardPage.isDashboardLoaded(), "Dashboard did not load");
 
-        try {
-            dashboardPage.logout();
-            Thread.sleep(2000);
-            String currentUrl = driver.getCurrentUrl();
-            Assert.assertTrue(currentUrl.contains("login"), "User not logged out properly");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        dashboardPage.logout();
+        
+        // ✅ Wait for login page URL after logout
+        wait.until(ExpectedConditions.urlContains("login"));
+        
+        String currentUrl = driver.getCurrentUrl();
+        Assert.assertTrue(currentUrl.contains("login"), "User not logged out properly");
     }
 }
