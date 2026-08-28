@@ -1,0 +1,144 @@
+package tests;
+
+import base.BaseTest;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import pages.DashboardPage;
+import pages.LoginPage;
+import pages.ProfilePage;
+
+public class ProfileTest extends BaseTest {
+
+    /**
+     * Test: Verify Profile Page Loads
+     */
+    @Test(groups = {"smoke", "regression"}, description = "Verify profile page loads successfully")
+    public void verifyProfilePageLoads() {
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login("Admin", "admin123");
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        DashboardPage dashboardPage = new DashboardPage(driver);
+        dashboardPage.clickUserProfile();
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ProfilePage profilePage = new ProfilePage(driver);
+        Assert.assertTrue(profilePage.isProfilePageLoaded(), "Profile page did not load");
+    }
+
+    /**
+     * Test: Verify Profile Image is Displayed
+     */
+    @Test(groups = {"regression"}, description = "Verify profile image is visible")
+    public void verifyProfileImageDisplayed() {
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login("Admin", "admin123");
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        DashboardPage dashboardPage = new DashboardPage(driver);
+        dashboardPage.clickUserProfile();
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ProfilePage profilePage = new ProfilePage(driver);
+        Assert.assertTrue(profilePage.isProfileImageDisplayed(), "Profile image not displayed");
+    }
+
+    /**
+     * Test: Verify Profile Information Display
+     */
+    @Test(groups = {"regression"}, description = "Verify personal details are displayed")
+    public void verifyProfileInformation() {
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login("Admin", "admin123");
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        DashboardPage dashboardPage = new DashboardPage(driver);
+        dashboardPage.clickUserProfile();
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ProfilePage profilePage = new ProfilePage(driver);
+        Assert.assertTrue(profilePage.isProfilePageLoaded(), "Profile page not loaded");
+
+        String firstName = profilePage.getFirstName();
+        String lastName = profilePage.getLastName();
+        String email = profilePage.getEmail();
+
+        Assert.assertNotNull(firstName, "First name is empty");
+        Assert.assertNotNull(lastName, "Last name is empty");
+        Assert.assertNotNull(email, "Email is empty");
+
+        System.out.println("Profile Information:");
+        System.out.println("First Name: " + firstName);
+        System.out.println("Last Name: " + lastName);
+        System.out.println("Email: " + email);
+    }
+
+    /**
+     * Test: Verify Update Personal Information
+     */
+    @Test(groups = {"regression"}, description = "Verify updating personal information")
+    public void verifyUpdatePersonalInfo() {
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login("Admin", "admin123");
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        DashboardPage dashboardPage = new DashboardPage(driver);
+        dashboardPage.clickUserProfile();
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ProfilePage profilePage = new ProfilePage(driver);
+        Assert.assertTrue(profilePage.isProfilePageLoaded(), "Profile page not loaded");
+
+        // Update phone
+        profilePage.updatePhone("1234567890");
+        profilePage.saveProfile();
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Assert.assertTrue(profilePage.isSuccessMessageDisplayed(), "Success message not displayed");
+    }
+}
